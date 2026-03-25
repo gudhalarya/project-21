@@ -1,16 +1,26 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'motion/react';
 import { Button } from '@/components/ui/button';
 import { ArrowDown } from 'lucide-react';
 
 const HeroSection = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
+
   const words = "Excellence. Authority. Clarity.".split(" ");
+  
+  const y = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
 
   const container = {
     hidden: { opacity: 0 },
     visible: (i = 1) => ({
       opacity: 1,
-      transition: { staggerChildren: 0.12, delayChildren: 0.04 * i },
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
     }),
   };
 
@@ -18,19 +28,21 @@ const HeroSection = () => {
     visible: {
       opacity: 1,
       y: 0,
+      scale: 1,
       transition: {
         type: "spring" as const,
-        damping: 12,
-        stiffness: 100,
+        damping: 15,
+        stiffness: 150,
       },
     },
     hidden: {
       opacity: 0,
-      y: 20,
+      y: 100,
+      scale: 0.8,
       transition: {
         type: "spring" as const,
-        damping: 12,
-        stiffness: 100,
+        damping: 15,
+        stiffness: 150,
       },
     },
   };
@@ -43,70 +55,72 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
-      {/* Background line art pattern */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-5">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="black" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
-
-      <div className="z-10 flex flex-col items-center">
+    <section ref={containerRef} className="h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-background">
+      <motion.div style={{ y, opacity, scale }} className="z-10 flex flex-col items-center">
         <motion.div
           variants={container}
           initial="hidden"
           animate="visible"
-          className="flex flex-wrap justify-center overflow-hidden"
+          className="flex flex-wrap justify-center overflow-hidden py-4"
         >
           {words.map((word, index) => (
             <motion.span
               key={index}
               variants={child}
-              className="text-6xl md:text-9xl font-extrabold uppercase tracking-tighter mx-2 md:mx-4"
+              className="text-7xl md:text-[10rem] font-black uppercase tracking-tighter mx-4 inline-block"
             >
               {word}
             </motion.span>
           ))}
         </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, scaleX: 0 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          className="h-[2px] bg-primary w-24 my-8"
+        />
+
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="mt-6 text-lg md:text-xl text-muted-foreground uppercase tracking-widest max-w-2xl mx-auto"
+          className="text-lg md:text-2xl text-muted-foreground uppercase tracking-[0.4em] max-w-3xl font-bold px-4"
         >
-          Elevating the next generation of scholars through rigorous academic coaching and personalized mentorship.
+          Crafting the Next Generation of Visionaries and High-Performance Scholars.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
-          className="mt-12"
+          className="mt-16"
         >
           <Button
             variant="default"
             size="lg"
-            className="px-12 py-8 text-xl font-bold uppercase tracking-widest rounded-none border-2 border-primary hover:bg-transparent hover:text-primary transition-all duration-300"
+            data-cursor="Start"
+            className="h-16 px-16 text-xl font-black uppercase tracking-widest rounded-full hover:scale-110 transition-transform duration-300"
             onClick={() => scrollToSection('#programs')}
           >
             Explore Programs
           </Button>
         </motion.div>
-      </div>
+      </motion.div>
 
       <motion.div
-        animate={{ y: [0, 10, 0] }}
+        animate={{ y: [0, 15, 0] }}
         transition={{ repeat: Infinity, duration: 2 }}
-        className="absolute bottom-12 cursor-pointer"
+        className="absolute bottom-12 cursor-pointer z-20"
         onClick={() => scrollToSection('#about')}
       >
-        <ArrowDown className="w-8 h-8 opacity-50" />
+        <div className="w-[1px] h-20 bg-primary/20 relative overflow-hidden">
+           <motion.div 
+            animate={{ top: ['-100%', '100%'] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+            className="absolute left-0 w-full h-full bg-primary"
+           />
+        </div>
       </motion.div>
     </section>
   );

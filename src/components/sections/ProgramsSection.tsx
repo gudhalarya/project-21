@@ -63,8 +63,9 @@ const ProgramsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
+              data-cursor="View"
             >
-              <Card className="group relative h-full flex flex-col overflow-hidden border-2 border-primary/10 rounded-none transition-all duration-500 hover:border-primary hover:bg-primary hover:text-white cursor-pointer">
+              <Card className="group relative h-full flex flex-col overflow-hidden border border-primary/10 rounded-[1.5rem] transition-all duration-500 hover:border-primary hover:bg-primary hover:text-white cursor-pointer shadow-sm hover:shadow-xl">
                 <div className="relative h-64 w-full bg-muted overflow-hidden">
                   <img
                     src={program.image}

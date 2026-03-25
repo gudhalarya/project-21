@@ -59,20 +59,20 @@ const TestimonialsSection = () => {
               {testimonials.map((testimonial, index) => (
                 <CarouselItem key={index}>
                   <div className="p-1">
-                    <Card className="bg-transparent border-none text-white text-center">
-                      <CardContent className="flex flex-col items-center justify-center p-6 space-y-8">
-                        <Quote className="w-12 h-12 mb-4 opacity-50" />
-                        <blockquote className="text-2xl md:text-3xl font-bold uppercase tracking-tighter italic leading-relaxed">
+                    <Card className="bg-transparent border-none text-white text-center" data-cursor="Next">
+                      <CardContent className="flex flex-col items-center justify-center p-6 space-y-12">
+                        <Quote className="w-16 h-16 mb-4 opacity-20" />
+                        <blockquote className="text-3xl md:text-5xl font-black uppercase tracking-tighter italic leading-tight">
                           "{testimonial.quote}"
                         </blockquote>
                         <div className="flex flex-col items-center">
                           <img
                             src={testimonial.image}
                             alt={testimonial.author}
-                            className="w-20 h-20 rounded-none grayscale border-2 border-white/20 mb-4 object-cover"
+                            className="w-24 h-24 rounded-full grayscale border-4 border-white/10 mb-6 object-cover shadow-2xl"
                           />
-                          <p className="text-xl font-extrabold uppercase tracking-widest leading-none">{testimonial.author}</p>
-                          <p className="text-sm font-bold uppercase tracking-[0.3em] opacity-50 mt-2">{testimonial.program}</p>
+                          <p className="text-2xl font-black uppercase tracking-widest leading-none">{testimonial.author}</p>
+                          <p className="text-sm font-bold uppercase tracking-[0.4em] opacity-40 mt-4">{testimonial.program}</p>
                         </div>
                       </CardContent>
                     </Card>

@@ -123,9 +123,9 @@ const ContactSection = () => {
                     name="fullName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="uppercase tracking-widest font-bold text-xs">Full Name</FormLabel>
+                        <FormLabel className="uppercase tracking-widest font-bold text-xs opacity-50">Full Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="John Doe" className="rounded-none border-0 border-b border-primary/20 focus-visible:ring-0 focus-visible:border-primary transition-all duration-300" {...field} />
+                          <Input placeholder="John Doe" className="rounded-xl border border-primary/10 h-14 px-6 focus-visible:ring-primary/20 transition-all duration-300" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -136,9 +136,9 @@ const ContactSection = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="uppercase tracking-widest font-bold text-xs">Email Address</FormLabel>
+                        <FormLabel className="uppercase tracking-widest font-bold text-xs opacity-50">Email Address</FormLabel>
                         <FormControl>
-                          <Input placeholder="john@example.com" className="rounded-none border-0 border-b border-primary/20 focus-visible:ring-0 focus-visible:border-primary transition-all duration-300" {...field} />
+                          <Input placeholder="john@example.com" className="rounded-xl border border-primary/10 h-14 px-6 focus-visible:ring-primary/20 transition-all duration-300" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -152,9 +152,9 @@ const ContactSection = () => {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="uppercase tracking-widest font-bold text-xs">Phone Number</FormLabel>
+                        <FormLabel className="uppercase tracking-widest font-bold text-xs opacity-50">Phone Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="+1 (555) 000-0000" className="rounded-none border-0 border-b border-primary/20 focus-visible:ring-0 focus-visible:border-primary transition-all duration-300" {...field} />
+                          <Input placeholder="+1 (555) 000-0000" className="rounded-xl border border-primary/10 h-14 px-6 focus-visible:ring-primary/20 transition-all duration-300" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -165,14 +165,14 @@ const ContactSection = () => {
                     name="program"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="uppercase tracking-widest font-bold text-xs">Program of Interest</FormLabel>
+                        <FormLabel className="uppercase tracking-widest font-bold text-xs opacity-50">Program of Interest</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger className="rounded-none border-0 border-b border-primary/20 focus:ring-0 focus:border-primary transition-all duration-300">
+                            <SelectTrigger className="rounded-xl border border-primary/10 h-14 px-6 focus:ring-primary/20 transition-all duration-300">
                               <SelectValue placeholder="Select Program" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="rounded-none uppercase tracking-widest font-bold">
+                          <SelectContent className="rounded-xl uppercase tracking-widest font-bold">
                             <SelectItem value="competitive">Competitive Prep</SelectItem>
                             <SelectItem value="academic">Academic Tutoring</SelectItem>
                             <SelectItem value="skill">Skill Development</SelectItem>
@@ -189,11 +189,11 @@ const ContactSection = () => {
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="uppercase tracking-widest font-bold text-xs">Message</FormLabel>
+                      <FormLabel className="uppercase tracking-widest font-bold text-xs opacity-50">Message</FormLabel>
                       <FormControl>
                         <Textarea 
                           placeholder="Tell us about your academic goals..." 
-                          className="rounded-none border-0 border-b border-primary/20 focus-visible:ring-0 focus-visible:border-primary transition-all duration-300 min-h-[120px]" 
+                          className="rounded-xl border border-primary/10 px-6 py-4 focus-visible:ring-primary/20 transition-all duration-300 min-h-[120px]" 
                           {...field} 
                         />
                       </FormControl>
@@ -202,7 +202,7 @@ const ContactSection = () => {
                   )}
                 />
 
-                <Button type="submit" className="w-full h-16 text-lg font-bold uppercase tracking-widest rounded-none border-2 border-primary hover:bg-transparent hover:text-primary transition-all duration-300">
+                <Button type="submit" data-cursor="Send" className="w-full h-16 text-lg font-bold uppercase tracking-widest rounded-full hover:scale-105 transition-all duration-300">
                   Submit Inquiry
                 </Button>
               </form>

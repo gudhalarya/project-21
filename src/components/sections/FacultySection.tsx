@@ -55,8 +55,8 @@ const FacultySection = () => {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
             >
-              <Card className="border-none bg-transparent group overflow-hidden">
-                <div className="relative mb-6 overflow-hidden aspect-[3/4]">
+              <Card className="border-none bg-transparent group overflow-hidden" data-cursor="Profile">
+                <div className="relative mb-6 overflow-hidden aspect-[3/4] rounded-[1.5rem]">
                   <img
                     src={member.image}
                     alt={member.name}

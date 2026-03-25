@@ -14,7 +14,7 @@ const StatCounter = ({ value, label, suffix = "" }: { value: number, label: stri
   }, [isInView, spring, value]);
 
   return (
-    <div ref={ref} className="flex flex-col items-center justify-center p-8 space-y-4 border border-primary/10 hover:border-primary transition-all duration-300">
+    <div ref={ref} className="flex flex-col items-center justify-center p-8 space-y-4 border border-primary/10 hover:border-primary transition-all duration-300 rounded-[1.5rem]" data-cursor="Stat">
       <div className="text-6xl md:text-8xl font-black uppercase tracking-tighter flex items-end">
         <motion.span>{displayValue}</motion.span>
         <span className="text-3xl md:text-4xl mb-2 ml-1">{suffix}</span>

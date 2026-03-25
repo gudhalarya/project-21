@@ -7,7 +7,7 @@
 
 @layer base {
   :root {
-    --radius: 0rem; /* Sharp corners for premium look */
+    --radius: 0.75rem; /* Slightly rounded for premium look */
     --background: 0 0% 100%;
     --foreground: 0 0% 0%;
     --card: 0 0% 100%;
