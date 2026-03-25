@@ -70,7 +70,7 @@ const ProgramsSection = () => {
                   <img
                     src={program.image}
                     alt={program.title}
-                    className="object-cover w-full h-full grayscale hover:grayscale-0 transition-all duration-500 scale-105 group-hover:scale-110"
+                    className="object-cover w-full h-full saturate-110 contrast-105 transition-all duration-500 scale-105 group-hover:scale-110"
                   />
                   <div className="absolute top-4 left-4">
                     <Badge variant="secondary" className="bg-white/80 text-black border-none rounded-none font-bold uppercase tracking-widest">{program.level}</Badge>

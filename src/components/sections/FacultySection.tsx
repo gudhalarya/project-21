@@ -60,7 +60,7 @@ const FacultySection = () => {
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="object-cover w-full h-full grayscale hover:grayscale-0 transition-all duration-700 scale-100 group-hover:scale-110"
+                    className="object-cover w-full h-full saturate-110 contrast-105 transition-all duration-700 scale-100 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
                      <div className="text-white text-sm uppercase tracking-widest font-bold">Faculty Member</div>

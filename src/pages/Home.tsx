@@ -7,17 +7,8 @@ import AboutSection from '@/components/sections/AboutSection';
 import ProgramsSection from '@/components/sections/ProgramsSection';
 import WhyChooseUsSection from '@/components/sections/WhyChooseUsSection';
 import FacultySection from '@/components/sections/FacultySection';
-import TestimonialsSection from '@/components/sections/TestimonialsSection';
+import ClientFeedback from '@/components/ui/testimonial';
 import ContactSection from '@/components/sections/ContactSection';
-import { motion, useScroll, useTransform } from 'motion/react';
-
-const StackedSection = ({ children, index }: { children: React.ReactNode, index: number }) => {
-  return (
-    <div className="sticky top-0 h-screen w-full overflow-hidden">
-      {children}
-    </div>
-  );
-};
 
 const Home = () => {
   return (
@@ -26,10 +17,7 @@ const Home = () => {
       <Navigation />
       
       <main className="relative">
-        {/* Hero Section as first sticky layer */}
-        <div className="sticky top-0 h-screen w-full z-0 overflow-hidden">
-          <HeroSection />
-        </div>
+        <HeroSection />
 
         {/* About Section stacks on top of Hero */}
         <div className="relative z-10">
@@ -41,7 +29,7 @@ const Home = () => {
            <ProgramsSection />
            <WhyChooseUsSection />
            <FacultySection />
-           <TestimonialsSection />
+           <ClientFeedback />
            <ContactSection />
         </div>
       </main>

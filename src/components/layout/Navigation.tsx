@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
+import { InteractiveHoverLinks, INTERACTIVE_LINKS } from '@/components/ui/interactive-hover-links';
 
 const navLinks = [
   { name: 'About', href: '#about' },
@@ -15,7 +15,7 @@ const navLinks = [
 
 const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,35 +25,63 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!open) {
+      document.body.style.overflow = '';
+      return;
+    }
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+
   const scrollToSection = (id: string) => {
     const element = document.querySelector(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
-    setIsOpen(false);
+    setOpen(false);
   };
 
-  const navContainer = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
-      },
+  const menuLinks: typeof INTERACTIVE_LINKS = [
+    {
+      heading: 'About',
+      subheading: 'Who we are and how we teach',
+      imgSrc: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80',
+      href: '#about',
     },
-  };
-
-  const navItem = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1 },
-  };
+    {
+      heading: 'Programs',
+      subheading: 'JEE/NEET/Foundation tracks',
+      imgSrc: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80',
+      href: '#programs',
+    },
+    {
+      heading: 'Why Us',
+      subheading: 'Mentors, mock tests, daily practice',
+      imgSrc: 'https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=800&q=80',
+      href: '#why-us',
+    },
+    {
+      heading: 'Faculty',
+      subheading: 'Learn from experienced coaches',
+      imgSrc: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80',
+      href: '#faculty',
+    },
+    {
+      heading: 'Contact',
+      subheading: 'Talk to a counselor today',
+      imgSrc: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
+      href: '#contact',
+    },
+  ];
 
   return (
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 ${
+      className={`pointer-events-auto fixed top-0 left-0 w-full z-[999] transition-all duration-500 ${
         scrolled ? 'bg-background/90 backdrop-blur-xl border-b py-4' : 'bg-transparent py-8'
       }`}
     >
@@ -66,79 +94,106 @@ const Navigation = () => {
           Apex
         </button>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center space-x-12">
-          {navLinks.map((link) => (
-            <button
-              key={link.name}
-              onClick={() => scrollToSection(link.href)}
-              className="text-xs font-bold hover:opacity-50 transition-all duration-300 uppercase tracking-[0.3em] relative after:content-[''] after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[1px] after:bg-primary after:transition-all hover:after:w-full"
-            >
-              {link.name}
-            </button>
-          ))}
-          <Button 
-            variant="default" 
-            className="uppercase tracking-widest px-8 h-12 rounded-full font-bold transition-transform hover:scale-105"
-            onClick={() => scrollToSection('#contact')}
-            data-cursor="Enroll"
-          >
-            Enroll Now
-          </Button>
-        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Open menu"
+          className="rounded-full"
+          onClick={() => setOpen(true)}
+          data-cursor="Menu"
+        >
+          <Menu />
+        </Button>
+      </div>
 
-        {/* Mobile Nav Toggle */}
-        <div className="md:hidden">
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className="relative z-[110] w-10 h-10 flex flex-col justify-center items-center group"
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="menu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[200] bg-background"
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => {
+              const target = e.target as HTMLElement;
+              const anchor = target.closest('a') as HTMLAnchorElement | null;
+              if (!anchor) return;
+              const href = anchor.getAttribute('href') || '';
+              if (!href.startsWith('#')) return;
+              e.preventDefault();
+              scrollToSection(href);
+            }}
           >
-            <span className={`w-6 h-[2px] bg-primary transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-[2px]' : '-translate-y-1'}`} />
-            <span className={`w-6 h-[2px] bg-primary mt-1 transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-[2px]' : 'translate-y-1'}`} />
-          </button>
-        </div>
-
-        {/* Fullscreen Mobile Menu Overlay */}
-        <AnimatePresence>
-          {isOpen && (
             <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-0 bg-background z-[105] flex flex-col justify-center items-center px-6"
+              initial={{ y: -24, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -24, opacity: 0 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 220 }}
+              className="absolute inset-x-0 top-0 border-b bg-background/90 backdrop-blur-xl"
             >
-              <motion.div 
-                variants={navContainer}
-                initial="hidden"
-                animate="show"
-                className="flex flex-col items-center space-y-8"
+              <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+                <div className="text-xs font-bold uppercase tracking-[0.35em] text-muted-foreground">
+                  Navigation
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Close menu"
+                  className="rounded-full"
+                  onClick={() => setOpen(false)}
+                  data-cursor="Close"
+                >
+                  <X />
+                </Button>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 18 }}
+              transition={{ delay: 0.05, duration: 0.25 }}
+              className="h-full w-full overflow-y-auto pt-16"
+            >
+              <InteractiveHoverLinks links={menuLinks} />
+
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="mx-auto max-w-5xl px-4 md:px-8 pb-12"
               >
-                {navLinks.map((link) => (
-                  <motion.button
-                    key={link.name}
-                    variants={navItem}
-                    onClick={() => scrollToSection(link.href)}
-                    className="text-5xl font-extrabold uppercase tracking-tighter hover:opacity-50 transition-opacity"
-                  >
-                    {link.name}
-                  </motion.button>
-                ))}
-                <motion.div variants={navItem} className="w-full pt-8">
-                  <Button 
-                    variant="default" 
-                    size="lg"
-                    className="w-full text-xl h-16 uppercase tracking-widest rounded-full font-bold"
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: 'spring', damping: 20, stiffness: 220, delay: 0.2 }}
+                  className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 rounded-2xl border bg-card p-6"
+                >
+                  <div>
+                    <div className="text-2xl md:text-3xl font-black tracking-tight uppercase">
+                      Book a free counseling call
+                    </div>
+                    <div className="mt-2 text-sm text-muted-foreground">
+                      Get a personalized study plan and batch recommendation.
+                    </div>
+                  </div>
+                  <Button
+                    variant="default"
+                    className="h-12 px-10 rounded-full uppercase tracking-widest font-bold"
                     onClick={() => scrollToSection('#contact')}
+                    data-cursor="Enroll"
                   >
                     Enroll Now
                   </Button>
                 </motion.div>
               </motion.div>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 };

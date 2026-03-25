@@ -69,7 +69,7 @@ const TestimonialsSection = () => {
                           <img
                             src={testimonial.image}
                             alt={testimonial.author}
-                            className="w-24 h-24 rounded-full grayscale border-4 border-white/10 mb-6 object-cover shadow-2xl"
+                            className="w-24 h-24 rounded-full border-4 border-white/10 mb-6 object-cover shadow-2xl"
                           />
                           <p className="text-2xl font-black uppercase tracking-widest leading-none">{testimonial.author}</p>
                           <p className="text-sm font-bold uppercase tracking-[0.4em] opacity-40 mt-4">{testimonial.program}</p>

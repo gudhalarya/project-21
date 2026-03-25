@@ -1,127 +1,58 @@
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
-import { Button } from '@/components/ui/button';
-import { ArrowDown } from 'lucide-react';
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { BentoCell, BentoGrid, ContainerScale, ContainerScroll } from "@/components/ui/hero-gallery-scroll-animation";
+
+const HERO_IMAGES = [
+  // Group study table
+  "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1400&q=80",
+  // Classroom teaching
+  "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1400&q=80",
+  // Student with laptop & notes
+  "https://images.unsplash.com/photo-1488197047962-b48492212cda?w=1400&q=80",
+  // Library focus
+  "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=1400&q=80",
+  // Mentor-led session
+  "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1400&q=80",
+];
 
 const HeroSection = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  const words = "Excellence. Authority. Clarity.".split(" ");
-  
-  const y = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
-
-  const container = {
-    hidden: { opacity: 0 },
-    visible: (i = 1) => ({
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-    }),
-  };
-
-  const child = {
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring" as const,
-        damping: 15,
-        stiffness: 150,
-      },
-    },
-    hidden: {
-      opacity: 0,
-      y: 100,
-      scale: 0.8,
-      transition: {
-        type: "spring" as const,
-        damping: 15,
-        stiffness: 150,
-      },
-    },
-  };
-
-  const scrollToSection = (id: string) => {
-    const element = document.querySelector(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
-    <section ref={containerRef} className="h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-background">
-      <motion.div style={{ y, opacity, scale }} className="z-10 flex flex-col items-center">
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="visible"
-          className="flex flex-wrap justify-center overflow-hidden py-4"
-        >
-          {words.map((word, index) => (
-            <motion.span
+    <section className="relative w-full bg-white">
+      <ContainerScroll className="h-[420vh]">
+        <BentoGrid className="sticky left-0 top-0 z-0 h-screen w-full p-4 md:p-8">
+          {HERO_IMAGES.map((imageUrl, index) => (
+            <BentoCell
               key={index}
-              variants={child}
-              className="text-7xl md:text-[10rem] font-black uppercase tracking-tighter mx-4 inline-block"
+              className="overflow-hidden rounded-2xl shadow-2xl ring-1 ring-black/5 bg-white"
             >
-              {word}
-            </motion.span>
+              <img
+                className="h-full w-full object-cover object-center"
+                src={imageUrl}
+                alt="Coaching classroom"
+                loading="lazy"
+              />
+            </BentoCell>
           ))}
-        </motion.div>
+        </BentoGrid>
 
-        <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ delay: 0.5, duration: 1 }}
-          className="h-[2px] bg-primary w-24 my-8"
-        />
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="text-lg md:text-2xl text-muted-foreground uppercase tracking-[0.4em] max-w-3xl font-bold px-4"
-        >
-          Crafting the Next Generation of Visionaries and High-Performance Scholars.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 }}
-          className="mt-16"
-        >
-          <Button
-            variant="default"
-            size="lg"
-            data-cursor="Start"
-            className="h-16 px-16 text-xl font-black uppercase tracking-widest rounded-full hover:scale-110 transition-transform duration-300"
-            onClick={() => scrollToSection('#programs')}
-          >
-            Explore Programs
-          </Button>
-        </motion.div>
-      </motion.div>
-
-      <motion.div
-        animate={{ y: [0, 15, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-        className="absolute bottom-12 cursor-pointer z-20"
-        onClick={() => scrollToSection('#about')}
-      >
-        <div className="w-[1px] h-20 bg-primary/20 relative overflow-hidden">
-           <motion.div 
-            animate={{ top: ['-100%', '100%'] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-            className="absolute left-0 w-full h-full bg-primary"
-           />
-        </div>
-      </motion.div>
+        <ContainerScale className="relative z-10 text-center">
+          <h1 className="mx-auto max-w-3xl text-4xl font-black tracking-tight text-slate-900 md:text-6xl">
+            Crack exams with deliberate practice.
+          </h1>
+          <p className="my-6 mx-auto max-w-2xl text-base text-slate-600 md:text-lg">
+            Live doubt rooms, daily practice sets, weekly analytics, and mentors who stay on your case
+            until concepts stick.
+          </p>
+          <div className="flex items-center justify-center gap-4">
+            <Button className="bg-indigo-600 px-6 py-3 text-sm font-semibold tracking-tight hover:bg-indigo-500">
+              Book a free session
+            </Button>
+            <Button variant="outline" className="px-6 py-3 text-sm font-semibold tracking-tight">
+              View programs
+            </Button>
+          </div>
+        </ContainerScale>
+      </ContainerScroll>
     </section>
   );
 };

@@ -6,6 +6,8 @@ const CustomCursor = () => {
   const [cursorText, setCursorText] = useState("");
   const cursorX = useSpring(0, { damping: 25, stiffness: 250 });
   const cursorY = useSpring(0, { damping: 25, stiffness: 250 });
+  const size = cursorText ? 64 : isPointer ? 12 : 8;
+  const scale = cursorText ? 1 : isPointer ? 1.8 : 1;
 
   useEffect(() => {
     const moveCursor = (e: MouseEvent) => {
@@ -39,9 +41,9 @@ const CustomCursor = () => {
           translateY: '-50%',
         }}
         animate={{
-          scale: isPointer ? 3 : 1,
-          width: cursorText ? 80 : 8,
-          height: cursorText ? 80 : 8,
+          scale,
+          width: size,
+          height: size,
         }}
         className="fixed top-0 left-0 bg-white rounded-full pointer-events-none z-[9999] hidden md:flex items-center justify-center mix-blend-difference border border-white/20"
       >
