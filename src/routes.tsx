@@ -2,6 +2,9 @@ import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import DemoLinks from './pages/DemoLinks';
 import TestimonialDemo from './pages/TestimonialDemo';
+import AdminMessages from './pages/AdminMessages';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -27,6 +30,24 @@ const routes: RouteConfig[] = [
     name: 'Testimonial Demo',
     path: '/testimonial-demo',
     element: <TestimonialDemo />,
+    visible: false
+  },
+  {
+    name: 'Admin Messages',
+    path: '/admin/messages',
+    element: <AdminMessages />,
+    visible: false
+  },
+  {
+    name: 'Admin Login',
+    path: '/admin/login',
+    element: <AdminLogin />,
+    visible: false
+  },
+  {
+    name: 'Admin Dashboard',
+    path: '/admin/dashboard',
+    element: <AdminDashboard />,
     visible: false
   },
   {

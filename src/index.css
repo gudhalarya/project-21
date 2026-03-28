@@ -80,7 +80,7 @@
 @layer base {
   * {
     @apply border-border;
-    font-family: 'Sora', sans-serif;
+    font-family: 'SF Pro Display', 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Sora', sans-serif;
   }
 
   body {

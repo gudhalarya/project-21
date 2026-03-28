@@ -51,7 +51,7 @@ const Navigation = () => {
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           className="text-2xl font-black uppercase tracking-tight text-foreground"
         >
-          Apex
+          Career
         </button>
 
         <div className="hidden items-center gap-6 md:flex">

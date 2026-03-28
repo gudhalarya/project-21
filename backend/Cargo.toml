@@ -8,5 +8,10 @@ actix-web = "4.13.0"
 argon2 = "0.5.3"
 chrono = "0.4.44"
 jsonwebtoken = "10.3.0"
-serde = "1.0.228"
+serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
+tokio = { version = "1.40.0", features = ["rt-multi-thread", "macros"] }
+sqlx = { version = "0.8.2", features = ["runtime-tokio", "postgres", "chrono", "uuid", "macros", "migrate"] }
+dotenvy = "0.15.7"
+env_logger = "0.11.5"
+log = "0.4.22"

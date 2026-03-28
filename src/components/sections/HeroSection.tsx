@@ -28,7 +28,7 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Apex Coaching
+            Career Coaching
           </motion.p>
           <motion.h1
             className="text-4xl font-black leading-tight tracking-tight md:text-6xl"

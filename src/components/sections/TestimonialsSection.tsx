@@ -12,7 +12,7 @@ import { Quote } from 'lucide-react';
 
 const testimonials = [
   {
-    quote: "Apex gave me the discipline and analytical tools to tackle my exams with confidence. The mentorship is truly personalized.",
+    quote: "Career gave me the discipline and analytical tools to tackle my exams with confidence. The mentorship is truly personalized.",
     author: "James Wilson",
     program: "Competitive Prep",
     image: "https://miaoda-site-img.s3cdn.medo.dev/images/KLing_fba4395f-e2f2-4762-bd6d-57c1a7e0a73e.jpg"
@@ -24,7 +24,7 @@ const testimonials = [
     image: "https://miaoda-site-img.s3cdn.medo.dev/images/KLing_50b8b710-14bf-47a7-a1fb-10caae89fcdd.jpg"
   },
   {
-    quote: "Skills I learned at Apex, especially public speaking and logic, have helped me beyond just academics.",
+    quote: "Skills I learned at Career, especially public speaking and logic, have helped me beyond just academics.",
     author: "Michael O'Neill",
     program: "Skill Development",
     image: "https://miaoda-site-img.s3cdn.medo.dev/images/KLing_3068d5b4-7e2a-4a36-8ceb-a0cc2a58bd0c.jpg"

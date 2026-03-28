@@ -9,11 +9,13 @@ import WhyChooseUsSection from '@/components/sections/WhyChooseUsSection';
 import FacultySection from '@/components/sections/FacultySection';
 import ClientFeedback from '@/components/ui/testimonial';
 import ContactSection from '@/components/sections/ContactSection';
+import FloatingWhatsApp from '@/components/ui/floating-whatsapp';
 
 const Home = () => {
   return (
     <div className="relative min-h-screen bg-background text-foreground font-sora selection:bg-primary selection:text-primary-foreground no-scrollbar">
       <CustomCursor />
+      <FloatingWhatsApp />
       <Navigation />
       <main className="relative">
         <HeroSection />

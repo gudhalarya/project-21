@@ -63,7 +63,7 @@ const WhyChooseUsSection = () => {
         <div className="flex flex-col md:flex-row gap-12">
           <div className="md:w-1/2 flex flex-col justify-center">
             <h2 className="text-5xl md:text-7xl font-extrabold uppercase tracking-tighter mb-8 leading-none">
-              Why Apex <br /> stands alone.
+              Why Career <br /> stands alone.
             </h2>
             <p className="text-xl text-white/70 uppercase tracking-widest mb-12 max-w-lg leading-relaxed">
               We don't just teach courses; we build intellectual foundations that last a lifetime.
