@@ -34,10 +34,10 @@ const stats = [
 
 const AboutSection = () => {
   return (
-    <section id="about" className="relative bg-background px-6 py-24 md:px-12 md:py-32">
+    <section id="about" className="relative bg-gradient-to-b from-background via-white to-background px-6 py-24 md:px-12 md:py-32">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 left-1/2 h-[480px] w-[900px] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-48 left-0 h-[420px] w-[420px] rounded-full bg-purple-500/10 blur-3xl" />
+        <div className="absolute -top-40 left-1/2 h-[480px] w-[900px] -translate-x-1/2 rounded-full bg-primary/12 blur-3xl" />
+        <div className="absolute -bottom-48 left-0 h-[420px] w-[420px] rounded-full bg-[hsl(48,94%,58%)]/18 blur-3xl" />
       </div>
 
       <div className="container relative mx-auto">
@@ -64,7 +64,7 @@ const AboutSection = () => {
               {["Daily drills", "Mistake analysis", "Weekly reviews", "Exam strategy"].map((chip) => (
                 <div
                   key={chip}
-                  className="rounded-full border border-primary/10 bg-background/70 px-4 py-2 text-xs font-black uppercase tracking-widest text-muted-foreground backdrop-blur"
+                  className="rounded-full border border-primary/20 bg-white/80 px-4 py-2 text-xs font-black uppercase tracking-widest text-muted-foreground backdrop-blur"
                 >
                   {chip}
                 </div>
@@ -92,13 +92,13 @@ const AboutSection = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: idx * 0.08 }}
                   viewport={{ once: true, amount: 0.3 }}
-                  className="group rounded-[1.5rem] border border-primary/10 bg-background/60 p-6 shadow-sm backdrop-blur transition-colors duration-300 hover:border-primary/30"
+                  className="group rounded-[1.5rem] border border-primary/15 bg-white/80 p-6 shadow-sm backdrop-blur transition-colors duration-300 hover:border-primary/40"
                 >
                   <div className="flex items-center justify-between">
                     <div className="text-xs font-black uppercase tracking-[0.4em] text-muted-foreground">
                       {h.k} / {h.title}
                     </div>
-                    <div className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-primary/20 to-purple-500/20 text-foreground transition-colors duration-300 group-hover:from-primary/25 group-hover:to-purple-500/25">
+                    <div className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-primary/20 to-[hsl(48,94%,58%)]/25 text-foreground transition-colors duration-300 group-hover:from-primary/30 group-hover:to-[hsl(48,94%,58%)]/35">
                       <h.Icon className="h-5 w-5" />
                     </div>
                   </div>
@@ -117,9 +117,9 @@ const AboutSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.05 }}
               viewport={{ once: true, amount: 0.3 }}
-              className="mt-6 overflow-hidden rounded-[1.75rem] border border-primary/10 bg-gradient-to-r from-primary/10 via-transparent to-purple-500/10 p-[1px]"
+              className="mt-6 overflow-hidden rounded-[1.75rem] border border-primary/15 bg-gradient-to-r from-primary/12 via-white/40 to-[hsl(48,94%,58%)]/18 p-[1px]"
             >
-              <div className="rounded-[1.7rem] bg-background/80 px-8 py-8 backdrop-blur">
+              <div className="rounded-[1.7rem] bg-white/85 px-8 py-8 backdrop-blur">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div className="max-w-2xl">
                     <div className="text-2xl font-black uppercase tracking-tighter md:text-3xl">
@@ -131,7 +131,7 @@ const AboutSection = () => {
                   </div>
                   <a
                     href="#contact"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-black uppercase tracking-widest text-primary-foreground"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[hsl(48,94%,58%)] px-6 py-3 text-sm font-black uppercase tracking-widest text-foreground shadow-lg shadow-primary/15"
                   >
                     Start a free audit <ArrowRight className="h-4 w-4" />
                   </a>

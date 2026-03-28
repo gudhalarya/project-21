@@ -14,12 +14,12 @@ const StatCounter = ({ value, label, suffix = "" }: { value: number, label: stri
   }, [isInView, spring, value]);
 
   return (
-    <div ref={ref} className="flex flex-col items-center justify-center p-8 space-y-4 border border-primary/10 hover:border-primary transition-all duration-300 rounded-[1.5rem]" data-cursor="Stat">
+    <div ref={ref} className="flex flex-col items-center justify-center p-8 space-y-4 border border-white/10 bg-white/5 hover:border-[hsl(48,94%,58%)]/60 transition-all duration-300 rounded-[1.5rem] backdrop-blur" data-cursor="Stat">
       <div className="text-6xl md:text-8xl font-black uppercase tracking-tighter flex items-end">
         <motion.span>{displayValue}</motion.span>
         <span className="text-3xl md:text-4xl mb-2 ml-1">{suffix}</span>
       </div>
-      <p className="text-sm md:text-md uppercase tracking-widest text-muted-foreground text-center font-bold">
+      <p className="text-sm md:text-md uppercase tracking-widest text-white/70 text-center font-bold">
         {label}
       </p>
     </div>
@@ -51,7 +51,7 @@ const WhyChooseUsSection = () => {
   ];
 
   return (
-    <section id="why-us" className="py-24 px-6 md:px-12 bg-black text-white overflow-hidden">
+    <section id="why-us" className="py-24 px-6 md:px-12 bg-gradient-to-br from-[#0a1f47] via-[#0c2f70] to-[#0b3b9e] text-white overflow-hidden">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
           <StatCounter value={98} suffix="%" label="Success Rate" />
@@ -65,7 +65,7 @@ const WhyChooseUsSection = () => {
             <h2 className="text-5xl md:text-7xl font-extrabold uppercase tracking-tighter mb-8 leading-none">
               Why Apex <br /> stands alone.
             </h2>
-            <p className="text-xl text-muted-foreground uppercase tracking-widest mb-12 max-w-lg leading-relaxed">
+            <p className="text-xl text-white/70 uppercase tracking-widest mb-12 max-w-lg leading-relaxed">
               We don't just teach courses; we build intellectual foundations that last a lifetime.
             </p>
           </div>
@@ -78,7 +78,7 @@ const WhyChooseUsSection = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="p-8 border border-white/10 hover:border-white transition-all duration-300"
+                className="p-8 border border-white/10 bg-white/5 hover:border-[hsl(48,94%,58%)]/60 transition-all duration-300 backdrop-blur"
               >
                 <div className="text-4xl font-black mb-4 opacity-20">{item.number}</div>
                 <h3 className="text-2xl font-bold uppercase tracking-tighter mb-4">{item.title}</h3>

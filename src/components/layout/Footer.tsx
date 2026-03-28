@@ -4,19 +4,19 @@ import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white py-20 px-6 border-t border-white/10">
+    <footer className="bg-gradient-to-br from-[#0a1f47] via-[#0c2f70] to-[#0b3b9e] text-white py-20 px-6 border-t border-white/10">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start mb-16 space-y-12 md:space-y-0">
           <div className="max-w-md">
             <h2 className="text-4xl font-extrabold uppercase tracking-tighter mb-6">Apex</h2>
-            <p className="text-muted-foreground uppercase tracking-widest text-sm leading-relaxed">
+            <p className="text-white/70 uppercase tracking-widest text-sm leading-relaxed">
               Dedicated to the pursuit of academic excellence since 2012. Our mission is to shape the leaders of tomorrow through rigorous intellectual development.
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-20">
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-[0.4em] mb-8 text-white/50">Navigation</h3>
+              <h3 className="text-xs font-bold uppercase tracking-[0.4em] mb-8 text-white/60">Navigation</h3>
               <ul className="space-y-4 uppercase tracking-widest text-xs font-bold">
                 <li><a href="#about" className="hover:opacity-50 transition-opacity">About</a></li>
                 <li><a href="#programs" className="hover:opacity-50 transition-opacity">Programs</a></li>
@@ -25,7 +25,7 @@ const Footer = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-[0.4em] mb-8 text-white/50">Social</h3>
+              <h3 className="text-xs font-bold uppercase tracking-[0.4em] mb-8 text-white/60">Social</h3>
               <ul className="space-y-4 uppercase tracking-widest text-xs font-bold">
                 <li className="flex items-center space-x-2"><Linkedin className="w-4 h-4" /> <a href="#" className="hover:opacity-50 transition-opacity">LinkedIn</a></li>
                 <li className="flex items-center space-x-2"><Twitter className="w-4 h-4" /> <a href="#" className="hover:opacity-50 transition-opacity">Twitter</a></li>

@@ -15,7 +15,6 @@ const Home = () => {
     <div className="relative min-h-screen bg-background text-foreground font-sora selection:bg-primary selection:text-primary-foreground no-scrollbar">
       <CustomCursor />
       <Navigation />
-      
       <main className="relative">
         <HeroSection />
 

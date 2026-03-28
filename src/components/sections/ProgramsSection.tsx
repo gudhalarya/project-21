@@ -30,7 +30,7 @@ const programs = [
 
 const ProgramsSection = () => {
   return (
-    <section id="programs" className="py-24 px-6 md:px-12 bg-background border-t">
+    <section id="programs" className="py-24 px-6 md:px-12 bg-gradient-to-b from-background via-white to-background border-t">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16">
           <motion.div
@@ -65,7 +65,7 @@ const ProgramsSection = () => {
               viewport={{ once: true }}
               data-cursor="View"
             >
-              <Card className="group relative h-full flex flex-col overflow-hidden border border-primary/10 rounded-[1.5rem] transition-all duration-500 hover:border-primary hover:bg-primary hover:text-white cursor-pointer shadow-sm hover:shadow-xl">
+              <Card className="group relative h-full flex flex-col overflow-hidden border border-primary/12 rounded-[1.5rem] transition-all duration-500 hover:border-primary hover:bg-primary hover:text-white cursor-pointer shadow-sm hover:shadow-2xl">
                 <div className="relative h-64 w-full bg-muted overflow-hidden">
                   <img
                     src={program.image}
@@ -73,7 +73,9 @@ const ProgramsSection = () => {
                     className="object-cover w-full h-full saturate-110 contrast-105 transition-all duration-500 scale-105 group-hover:scale-110"
                   />
                   <div className="absolute top-4 left-4">
-                    <Badge variant="secondary" className="bg-white/80 text-black border-none rounded-none font-bold uppercase tracking-widest">{program.level}</Badge>
+                    <Badge variant="secondary" className="bg-[hsl(48,94%,58%)] text-foreground border-none rounded-none font-bold uppercase tracking-widest shadow-sm">
+                      {program.level}
+                    </Badge>
                   </div>
                 </div>
                 <CardHeader className="pt-8">

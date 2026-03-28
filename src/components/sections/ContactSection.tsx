@@ -59,7 +59,7 @@ const ContactSection = () => {
   }
 
   return (
-    <section id="contact" className="py-24 px-6 md:px-12 bg-background border-t">
+    <section id="contact" className="py-24 px-6 md:px-12 bg-gradient-to-b from-background via-white to-background border-t">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
           <motion.div
@@ -113,7 +113,7 @@ const ContactSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="p-8 md:p-12 border-2 border-primary/10 hover:border-primary transition-all duration-500"
+            className="p-8 md:p-12 border-2 border-primary/12 bg-white/90 backdrop-blur hover:border-primary transition-all duration-500 shadow-lg"
           >
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
