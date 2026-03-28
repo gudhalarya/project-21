@@ -3,7 +3,7 @@ use std::env;
 use actix_web::{middleware::Logger, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use sqlx::{postgres::PgPoolOptions, Pool, Postgres, FromRow};
+use sqlx::{postgres::PgPoolOptions, FromRow, Pool, Postgres};
 use jsonwebtoken::{encode, decode, Header, Validation, EncodingKey, DecodingKey, Algorithm};
 
 type DbPool = Pool<Postgres>;
@@ -61,6 +61,36 @@ struct UpdateContact {
     message: Option<String>,
 }
 
+#[derive(Serialize, FromRow)]
+struct SuccessStory {
+    id: i64,
+    student_name: String,
+    exam: String,
+    score: String,
+    image_url: String,
+    highlight: Option<String>,
+    created_at: DateTime<Utc>,
+    updated_at: DateTime<Utc>,
+}
+
+#[derive(Deserialize)]
+struct CreateSuccessStory {
+    student_name: String,
+    exam: String,
+    score: String,
+    image_url: String,
+    highlight: Option<String>,
+}
+
+#[derive(Deserialize)]
+struct UpdateSuccessStory {
+    student_name: Option<String>,
+    exam: Option<String>,
+    score: Option<String>,
+    image_url: Option<String>,
+    highlight: Option<String>,
+}
+
 async fn create_contact(
     state: web::Data<AppState>,
     payload: web::Json<ContactForm>,
@@ -88,6 +118,137 @@ async fn create_contact(
     .map_err(internal_error)?;
 
     Ok(HttpResponse::Created().json(rec))
+}
+
+async fn list_success_stories(state: web::Data<AppState>) -> actix_web::Result<impl Responder> {
+    let rows = sqlx::query_as::<_, SuccessStory>(
+        r#"SELECT id, student_name, exam, score, image_url, highlight, created_at, updated_at
+           FROM success_stories
+           ORDER BY created_at DESC"#,
+    )
+    .fetch_all(&state.pool)
+    .await
+    .map_err(internal_error)?;
+
+    Ok(HttpResponse::Ok().json(rows))
+}
+
+async fn admin_list_success_stories(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+) -> actix_web::Result<impl Responder> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+
+    list_success_stories(state).await
+}
+
+async fn admin_create_success_story(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+    payload: web::Json<CreateSuccessStory>,
+) -> actix_web::Result<impl Responder> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+
+    let CreateSuccessStory {
+        student_name,
+        exam,
+        score,
+        image_url,
+        highlight,
+    } = payload.into_inner();
+
+    let rec = sqlx::query_as::<_, SuccessStory>(
+        r#"
+        INSERT INTO success_stories (student_name, exam, score, image_url, highlight)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id, student_name, exam, score, image_url, highlight, created_at, updated_at
+        "#,
+    )
+    .bind(student_name)
+    .bind(exam)
+    .bind(score)
+    .bind(image_url)
+    .bind(highlight)
+    .fetch_one(&state.pool)
+    .await
+    .map_err(internal_error)?;
+
+    Ok(HttpResponse::Created().json(rec))
+}
+
+async fn admin_update_success_story(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+    path: web::Path<i64>,
+    payload: web::Json<UpdateSuccessStory>,
+) -> actix_web::Result<impl Responder> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+
+    let id = path.into_inner();
+    let UpdateSuccessStory {
+        student_name,
+        exam,
+        score,
+        image_url,
+        highlight,
+    } = payload.into_inner();
+
+    let rec = sqlx::query_as::<_, SuccessStory>(
+        r#"
+        UPDATE success_stories
+        SET student_name = COALESCE($2, student_name),
+            exam = COALESCE($3, exam),
+            score = COALESCE($4, score),
+            image_url = COALESCE($5, image_url),
+            highlight = COALESCE($6, highlight),
+            updated_at = NOW()
+        WHERE id = $1
+        RETURNING id, student_name, exam, score, image_url, highlight, created_at, updated_at
+        "#,
+    )
+    .bind(id)
+    .bind(student_name)
+    .bind(exam)
+    .bind(score)
+    .bind(image_url)
+    .bind(highlight)
+    .fetch_optional(&state.pool)
+    .await
+    .map_err(internal_error)?;
+
+    match rec {
+        Some(row) => Ok(HttpResponse::Ok().json(row)),
+        None => Ok(HttpResponse::NotFound().finish()),
+    }
+}
+
+async fn admin_delete_success_story(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+    path: web::Path<i64>,
+) -> actix_web::Result<impl Responder> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+
+    let id = path.into_inner();
+    let result = sqlx::query("DELETE FROM success_stories WHERE id = $1")
+        .bind(id)
+        .execute(&state.pool)
+        .await
+        .map_err(internal_error)?;
+
+    if result.rows_affected() == 0 {
+        Ok(HttpResponse::NotFound().finish())
+    } else {
+        Ok(HttpResponse::NoContent().finish())
+    }
 }
 
 fn is_admin(req: &HttpRequest, state: &AppState) -> bool {
@@ -253,12 +414,17 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::scope("/api")
                     .route("/contact", web::post().to(create_contact))
+                    .route("/success-stories", web::get().to(list_success_stories))
                     .route("/admin/login", web::post().to(admin_login))
                     .service(
                         web::scope("/admin")
                             .route("/messages", web::get().to(list_messages))
                             .route("/messages/{id}", web::patch().to(update_message))
-                            .route("/messages/{id}", web::delete().to(delete_message)),
+                            .route("/messages/{id}", web::delete().to(delete_message))
+                            .route("/success-stories", web::post().to(admin_create_success_story))
+                            .route("/success-stories", web::get().to(admin_list_success_stories))
+                            .route("/success-stories/{id}", web::patch().to(admin_update_success_story))
+                            .route("/success-stories/{id}", web::delete().to(admin_delete_success_story)),
                     ),
             )
     })

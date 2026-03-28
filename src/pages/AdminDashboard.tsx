@@ -11,12 +11,12 @@ const cards = [
     accent: 'bg-primary/10 text-primary',
   },
   {
-    title: 'Site Content',
-    description: 'Placeholder for future sections (hero, programs, faculty, etc.).',
-    to: '#',
+    title: 'Success Stories',
+    description: 'Add exam results with images and highlights for the public site.',
+    to: '/admin/success-stories',
     icon: FileText,
     accent: 'bg-amber-100 text-amber-700',
-    disabled: true,
+    disabled: false,
   },
   {
     title: 'Access Control',

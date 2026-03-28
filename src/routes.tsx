@@ -5,6 +5,7 @@ import TestimonialDemo from './pages/TestimonialDemo';
 import AdminMessages from './pages/AdminMessages';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminSuccessStories from './pages/AdminSuccessStories';
 import type { ReactNode } from 'react';
 
 interface RouteConfig {
@@ -48,6 +49,12 @@ const routes: RouteConfig[] = [
     name: 'Admin Dashboard',
     path: '/admin/dashboard',
     element: <AdminDashboard />,
+    visible: false
+  },
+  {
+    name: 'Admin Success Stories',
+    path: '/admin/success-stories',
+    element: <AdminSuccessStories />,
     visible: false
   },
   {

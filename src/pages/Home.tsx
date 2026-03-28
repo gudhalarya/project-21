@@ -7,6 +7,7 @@ import AboutSection from '@/components/sections/AboutSection';
 import ProgramsSection from '@/components/sections/ProgramsSection';
 import WhyChooseUsSection from '@/components/sections/WhyChooseUsSection';
 import FacultySection from '@/components/sections/FacultySection';
+import SuccessStoriesSection from '@/components/sections/SuccessStoriesSection';
 import ClientFeedback from '@/components/ui/testimonial';
 import ContactSection from '@/components/sections/ContactSection';
 import FloatingWhatsApp from '@/components/ui/floating-whatsapp';
@@ -30,6 +31,7 @@ const Home = () => {
            <ProgramsSection />
            <WhyChooseUsSection />
            <FacultySection />
+           <SuccessStoriesSection />
            <ClientFeedback />
            <ContactSection />
         </div>
