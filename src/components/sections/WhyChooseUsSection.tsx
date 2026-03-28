@@ -80,9 +80,11 @@ const WhyChooseUsSection = () => {
                 viewport={{ once: true }}
                 className="p-8 border border-white/10 bg-white/5 hover:border-[hsl(48,94%,58%)]/60 transition-all duration-300 backdrop-blur"
               >
-                <div className="text-4xl font-black mb-4 opacity-20">{item.number}</div>
-                <h3 className="text-2xl font-bold uppercase tracking-tighter mb-4">{item.title}</h3>
-                <p className="text-sm text-muted-foreground uppercase tracking-wider leading-relaxed">
+                <div className="text-4xl font-black mb-4 text-white/40">{item.number}</div>
+                <h3 className="text-2xl font-bold uppercase tracking-tighter mb-4 text-white">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-white/80 uppercase tracking-wider leading-relaxed">
                   {item.description}
                 </p>
               </motion.div>

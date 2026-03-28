@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Menu, X, Phone, ArrowRight } from 'lucide-react';
+import { Phone, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '@/components/ui/button';
 
@@ -35,6 +35,8 @@ const Navigation = () => {
     setOpen(false);
   };
 
+  const lineTransition = { duration: 0.25, ease: 'easeInOut' };
+
   return (
     <motion.header
       initial={{ y: -40, opacity: 0 }}
@@ -57,13 +59,17 @@ const Navigation = () => {
             <button
               key={item.href}
               onClick={() => handleNavigate(item.href)}
-              className="text-sm font-semibold uppercase tracking-[0.18em] text-foreground/80 hover:text-foreground transition-colors"
+              className="text-sm font-semibold uppercase tracking-[0.18em] text-white/80 hover:text-white transition-colors"
             >
               {item.label}
             </button>
           ))}
           <div className="h-6 w-px bg-border" />
-          <Button size="sm" className="bg-[hsl(48,94%,58%)] text-foreground font-bold" onClick={() => handleNavigate('#contact')}>
+          <Button
+            size="sm"
+            className="bg-[hsl(48,94%,58%)] text-foreground font-bold"
+            onClick={() => handleNavigate('#contact')}
+          >
             Book Call
           </Button>
         </div>
@@ -71,32 +77,76 @@ const Navigation = () => {
         <Button
           variant="ghost"
           size="icon"
-          className="md:hidden"
+          className="rounded-full border border-border/60 hover:border-foreground/60 transition-colors md:hidden"
           aria-label="Toggle menu"
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? <X /> : <Menu />}
+          <motion.div
+            initial={false}
+            animate={open ? 'open' : 'closed'}
+            className="relative h-5 w-6"
+          >
+            <motion.span
+              variants={{
+                closed: { y: 0, rotate: 0 },
+                open: { y: 8, rotate: 45 },
+              }}
+              transition={lineTransition}
+              className="absolute left-0 block h-0.5 w-6 rounded-full bg-foreground"
+            />
+            <motion.span
+              variants={{
+                closed: { opacity: 1 },
+                open: { opacity: 0, x: 8 },
+              }}
+              transition={lineTransition}
+              className="absolute left-0 top-2 block h-0.5 w-6 rounded-full bg-foreground"
+            />
+            <motion.span
+              variants={{
+                closed: { y: 4, rotate: 0 },
+                open: { y: -4, rotate: -45 },
+              }}
+              transition={lineTransition}
+              className="absolute left-0 block h-0.5 w-6 rounded-full bg-foreground"
+            />
+          </motion.div>
         </Button>
       </div>
 
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
             className="fixed inset-0 z-40 bg-background/95 backdrop-blur-xl md:hidden"
           >
             <div className="container mx-auto px-6 pt-24 flex flex-col gap-6">
-              {links.map((item) => (
-                <button
-                  key={item.href}
-                  onClick={() => handleNavigate(item.href)}
-                  className="w-full text-left text-2xl font-bold uppercase tracking-tight text-foreground hover:text-[hsl(48,94%,58%)] transition-colors"
-                >
-                  {item.label}
-                </button>
-              ))}
+              <motion.div
+                initial="hidden"
+                animate="show"
+                variants={{
+                  hidden: { transition: { staggerChildren: 0.05, staggerDirection: -1 } },
+                  show: { transition: { staggerChildren: 0.08 } },
+                }}
+                className="flex flex-col gap-4"
+              >
+                {links.map((item) => (
+                  <motion.button
+                    key={item.href}
+                    onClick={() => handleNavigate(item.href)}
+                    variants={{
+                      hidden: { opacity: 0, x: -12 },
+                      show: { opacity: 1, x: 0 },
+                    }}
+                    className="w-full text-left text-2xl font-bold uppercase tracking-tight text-foreground hover:text-[hsl(48,94%,58%)] transition-colors"
+                  >
+                    {item.label}
+                  </motion.button>
+                ))}
+              </motion.div>
 
               <div className="mt-4 flex flex-col gap-3">
                 <Button className="w-full" onClick={() => handleNavigate('#contact')}>
