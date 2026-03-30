@@ -6,8 +6,8 @@ edition = "2024"
 [dependencies]
 actix-web = "4.13.0"
 argon2 = "0.5.3"
-chrono = "0.4.44"
-jsonwebtoken = "10.3.0"
+chrono = { version = "0.4.44", features = ["serde"] }
+jsonwebtoken = { version = "10.3.0", features = ["rust_crypto"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.149"
 tokio = { version = "1.40.0", features = ["rt-multi-thread", "macros"] }

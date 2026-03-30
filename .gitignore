@@ -31,3 +31,4 @@ history/*.json
 
 
 backend/target
+backemd/.env

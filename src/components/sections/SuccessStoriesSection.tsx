@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Sparkles, Trophy, ArrowUpRight } from 'lucide-react';
+import { API_BASE as DEFAULT_API_BASE, fetchJson } from '@/lib/api';
 
 type Story = {
   id: number;
@@ -10,7 +11,7 @@ type Story = {
   highlight?: string | null;
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? '';
+const API_BASE = import.meta.env.VITE_API_BASE ?? DEFAULT_API_BASE;
 
 const fallback: Story[] = [
   {
@@ -49,9 +50,7 @@ export default function SuccessStoriesSection() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`${API_BASE}/api/success-stories`);
-        if (!res.ok) throw new Error('Unable to load success stories');
-        const data: Story[] = await res.json();
+        const data = await fetchJson<Story[]>(`${API_BASE}/api/success-stories`);
         if (data.length) setStories(data);
       } catch (err: any) {
         setError(err.message || 'Failed to load success stories');

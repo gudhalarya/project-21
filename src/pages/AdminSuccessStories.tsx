@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Loader2, LogIn, Plus, RefreshCw, Save, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE as DEFAULT_API_BASE, fetchJson } from '@/lib/api';
 
 type Story = {
   id: number;
@@ -12,8 +13,7 @@ type Story = {
   created_at: string;
   updated_at: string;
 };
-
-const API_BASE = import.meta.env.VITE_API_BASE ?? '';
+const API_BASE = import.meta.env.VITE_API_BASE ?? DEFAULT_API_BASE;
 
 const emptyStory: Omit<Story, 'id' | 'created_at' | 'updated_at'> = {
   student_name: '',
@@ -25,8 +25,11 @@ const emptyStory: Omit<Story, 'id' | 'created_at' | 'updated_at'> = {
 
 export default function AdminSuccessStories() {
   const navigate = useNavigate();
-  const [token, setToken] = useState(() => localStorage.getItem('admin_token') || '');
-  const [username, setUsername] = useState(() => localStorage.getItem('admin_username') || '');
+  const getStoredToken = () => sessionStorage.getItem('admin_token') || localStorage.getItem('admin_token') || '';
+  const getStoredUser = () => sessionStorage.getItem('admin_username') || localStorage.getItem('admin_username') || '';
+
+  const [token, setToken] = useState(() => getStoredToken());
+  const [username, setUsername] = useState(() => getStoredUser());
   const [password, setPassword] = useState('');
   const [stories, setStories] = useState<Story[]>([]);
   const [form, setForm] = useState(emptyStory);
@@ -54,9 +57,7 @@ export default function AdminSuccessStories() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/admin/success-stories`, { headers });
-      if (!res.ok) throw new Error(`Failed to load (${res.status})`);
-      const data: Story[] = await res.json();
+      const data = await fetchJson<Story[]>(`${API_BASE}/api/admin/success-stories`, { headers });
       setStories(data);
     } catch (err: any) {
       setError(err.message || 'Failed to load stories');
@@ -78,13 +79,11 @@ export default function AdminSuccessStories() {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/admin/login`, {
+      const data = await fetchJson<{ token: string }>(`${API_BASE}/api/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
-      if (!res.ok) throw new Error('Invalid credentials');
-      const data = await res.json();
       setToken(data.token);
       localStorage.setItem('admin_username', username);
       setPassword('');
@@ -103,13 +102,11 @@ export default function AdminSuccessStories() {
     setCreating(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/admin/success-stories`, {
+      const created = await fetchJson<Story>(`${API_BASE}/api/admin/success-stories`, {
         method: 'POST',
         headers,
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error(`Failed to create (${res.status})`);
-      const created: Story = await res.json();
       setStories((prev) => [created, ...prev]);
       setForm(emptyStory);
     } catch (err: any) {
@@ -123,7 +120,7 @@ export default function AdminSuccessStories() {
     setSavingId(story.id);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/admin/success-stories/${story.id}`, {
+      const updated = await fetchJson<Story>(`${API_BASE}/api/admin/success-stories/${story.id}`, {
         method: 'PATCH',
         headers,
         body: JSON.stringify({
@@ -134,8 +131,6 @@ export default function AdminSuccessStories() {
           highlight: story.highlight,
         }),
       });
-      if (!res.ok) throw new Error(`Failed to update (${res.status})`);
-      const updated = await res.json();
       setStories((prev) => prev.map((s) => (s.id === story.id ? updated : s)));
     } catch (err: any) {
       setError(err.message || 'Failed to update');

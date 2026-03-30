@@ -32,7 +32,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('admin_token');
+    const token = sessionStorage.getItem('admin_token') || localStorage.getItem('admin_token');
     if (!token) navigate('/admin/login', { replace: true });
   }, [navigate]);
 

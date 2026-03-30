@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Loader2, RefreshCw, Trash2, Save, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE as DEFAULT_API_BASE, fetchJson } from '@/lib/api';
 
 type Message = {
   id: number;
@@ -14,14 +15,17 @@ type Message = {
   updated_at: string;
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? '';
+const API_BASE = import.meta.env.VITE_API_BASE ?? DEFAULT_API_BASE;
 
 const statusOptions = ['new', 'in_progress', 'resolved', 'archived'];
 
 export default function AdminMessages() {
   const navigate = useNavigate();
-  const [token, setToken] = useState(() => localStorage.getItem('admin_token') || '');
-  const [username, setUsername] = useState(() => localStorage.getItem('admin_username') || '');
+  const getStoredToken = () => sessionStorage.getItem('admin_token') || localStorage.getItem('admin_token') || '';
+  const getStoredUser = () => sessionStorage.getItem('admin_username') || localStorage.getItem('admin_username') || '';
+
+  const [token, setToken] = useState(() => getStoredToken());
+  const [username, setUsername] = useState(() => getStoredUser());
   const [password, setPassword] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
@@ -47,9 +51,7 @@ export default function AdminMessages() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/admin/messages`, { headers });
-      if (!res.ok) throw new Error(`Failed to load (${res.status})`);
-      const data: Message[] = await res.json();
+      const data = await fetchJson<Message[]>(`${API_BASE}/api/admin/messages`, { headers });
       setMessages(data);
     } catch (err: any) {
       setError(err.message || 'Failed to load messages');
@@ -71,13 +73,11 @@ export default function AdminMessages() {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/admin/login`, {
+      const data = await fetchJson<{ token: string }>(`${API_BASE}/api/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
-      if (!res.ok) throw new Error('Invalid credentials');
-      const data = await res.json();
       setToken(data.token);
       localStorage.setItem('admin_username', username);
       setPassword('');
@@ -92,13 +92,11 @@ export default function AdminMessages() {
     setSavingId(msg.id);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/admin/messages/${msg.id}`, {
+      const updated = await fetchJson<Message>(`${API_BASE}/api/admin/messages/${msg.id}`, {
         method: 'PATCH',
         headers,
         body: JSON.stringify({ status: msg.status, notes: msg.notes, message: msg.message }),
       });
-      if (!res.ok) throw new Error(`Failed to update (${res.status})`);
-      const updated = await res.json();
       setMessages((prev) => prev.map((m) => (m.id === msg.id ? updated : m)));
     } catch (err: any) {
       setError(err.message || 'Failed to update');

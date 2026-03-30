@@ -1,6 +1,6 @@
 use std::env;
 
-use actix_web::{middleware::Logger, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{middleware::{Logger, DefaultHeaders}, web, App, HttpRequest, HttpResponse, HttpServer, Responder, http::Method};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgPoolOptions, FromRow, Pool, Postgres};
@@ -120,7 +120,7 @@ async fn create_contact(
     Ok(HttpResponse::Created().json(rec))
 }
 
-async fn list_success_stories(state: web::Data<AppState>) -> actix_web::Result<impl Responder> {
+async fn list_success_stories(state: web::Data<AppState>) -> actix_web::Result<HttpResponse> {
     let rows = sqlx::query_as::<_, SuccessStory>(
         r#"SELECT id, student_name, exam, score, image_url, highlight, created_at, updated_at
            FROM success_stories
@@ -275,10 +275,18 @@ fn validate_jwt(token: &str, secret: &str) -> bool {
 async fn admin_login(state: web::Data<AppState>, payload: web::Json<LoginRequest>) -> actix_web::Result<impl Responder> {
     let LoginRequest { username, password } = payload.into_inner();
 
-    let expected_user = env::var("ADMIN_USERNAME").unwrap_or_else(|_| "admin".to_string());
-    let expected_pass = env::var("ADMIN_PASSWORD").unwrap_or_else(|_| "change-me".to_string());
+    // Authenticate against admins table (bcrypt via pgcrypto).
+    let valid = authenticate_admin(&state.pool, &username, &password)
+        .await
+        // Fallback to env credentials if DB check errors (e.g., table missing)
+        .unwrap_or_else(|err| {
+            log::error!("admin auth error: {err}");
+            let expected_user = env::var("ADMIN_USERNAME").unwrap_or_else(|_| "admin".to_string());
+            let expected_pass = env::var("ADMIN_PASSWORD").unwrap_or_else(|_| "change-me".to_string());
+            username == expected_user && password == expected_pass
+        });
 
-    if username != expected_user || password != expected_pass {
+    if !valid {
         return Ok(HttpResponse::Unauthorized().finish());
     }
 
@@ -297,6 +305,20 @@ async fn admin_login(state: web::Data<AppState>, payload: web::Json<LoginRequest
         token,
         expires_in: (exp as i64) - (now as i64),
     }))
+}
+
+async fn authenticate_admin(pool: &DbPool, username: &str, password: &str) -> Result<bool, sqlx::Error> {
+    // Uses PostgreSQL pgcrypto: crypt() with stored salt in password_hash (bcrypt).
+    let valid = sqlx::query_scalar::<_, bool>(
+        "SELECT password_hash = crypt($2, password_hash) FROM admins WHERE username = $1",
+    )
+    .bind(username)
+    .bind(password)
+    .fetch_optional(pool)
+    .await?
+    .unwrap_or(false);
+
+    Ok(valid)
 }
 
 async fn list_messages(state: web::Data<AppState>, req: HttpRequest) -> actix_web::Result<impl Responder> {
@@ -411,8 +433,16 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(web::Data::new(state.clone()))
             .wrap(Logger::default())
+            .wrap(
+                DefaultHeaders::new()
+                    .add(("Access-Control-Allow-Origin", "*"))
+                    .add(("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Admin-Token"))
+                    .add(("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS"))
+            )
             .service(
                 web::scope("/api")
+                    // Handle preflight
+                    .route("/{_:.*}", web::method(Method::OPTIONS).to(|| async { HttpResponse::Ok() }))
                     .route("/contact", web::post().to(create_contact))
                     .route("/success-stories", web::get().to(list_success_stories))
                     .route("/admin/login", web::post().to(admin_login))
