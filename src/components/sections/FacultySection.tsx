@@ -1,36 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { API_BASE as DEFAULT_API_BASE, fetchJson } from '@/lib/api';
 
-const faculty = [
-  {
-    name: "Dr. Elena Vance",
-    role: "Head of Sciences",
-    bio: "PhD in Theoretical Physics from MIT with 15+ years of coaching excellence.",
-    image: "https://miaoda-site-img.s3cdn.medo.dev/images/KLing_43ec0564-86ed-4398-83ce-d2b558cb77d3.jpg"
-  },
-  {
-    name: "Prof. Marcus Thorne",
-    role: "Mathematics Lead",
-    bio: "Expert in Advanced Calculus and competitive problem-solving strategies.",
-    image: "https://miaoda-site-img.s3cdn.medo.dev/images/KLing_54c5882e-8bda-43d0-a47e-3bbed5228a02.jpg"
-  },
-  {
-    name: "Sarah Jenkins",
-    role: "Language Arts",
-    bio: "Dedicated to improving critical reading and effective communication skills.",
-    image: "https://miaoda-site-img.s3cdn.medo.dev/images/KLing_b776c47b-d8f7-4831-9d8e-5ddcd16b4ec2.jpg"
-  },
-  {
-    name: "Arthur Penhaligon",
-    role: "Skill Development",
-    bio: "Specialist in behavioral science and student performance psychology.",
-    image: "https://miaoda-site-img.s3cdn.medo.dev/images/KLing_9e16baf5-c68d-4663-b144-3ba2406d0ece.jpg"
-  }
-];
+const API_BASE = import.meta.env.VITE_API_BASE ?? DEFAULT_API_BASE;
+
+type Faculty = {
+  id: number;
+  name: string;
+  role: string;
+  bio: string;
+  image_url: string;
+};
 
 const FacultySection = () => {
+  const [faculty, setFaculty] = useState<Faculty[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchJson<Faculty[]>(`${API_BASE}/api/faculty`)
+      .then(setFaculty)
+      .catch((err) => setError(err.message || 'Failed to load faculty'));
+  }, []);
+
   return (
     <section id="faculty" className="py-24 px-6 md:px-12 bg-background border-t">
       <div className="container mx-auto">
@@ -46,10 +38,19 @@ const FacultySection = () => {
           </motion.div>
         </div>
 
+        {error && (
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+          {faculty.length === 0 && !error && (
+            <p className="text-sm text-muted-foreground col-span-4">No faculty published yet.</p>
+          )}
           {faculty.map((member, index) => (
             <motion.div
-              key={index}
+              key={member.id}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -58,7 +59,7 @@ const FacultySection = () => {
               <Card className="border-none bg-transparent group overflow-hidden" data-cursor="Profile">
                 <div className="relative mb-6 overflow-hidden aspect-[3/4] rounded-[1.5rem]">
                   <img
-                    src={member.image}
+                    src={member.image_url}
                     alt={member.name}
                     className="object-cover w-full h-full saturate-110 contrast-105 transition-all duration-700 scale-100 group-hover:scale-110"
                   />

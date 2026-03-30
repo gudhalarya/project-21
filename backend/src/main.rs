@@ -91,6 +91,60 @@ struct UpdateSuccessStory {
     highlight: Option<String>,
 }
 
+#[derive(Serialize, FromRow)]
+struct Testimonial {
+    id: i64,
+    author: String,
+    program: String,
+    quote: String,
+    image_url: String,
+    created_at: DateTime<Utc>,
+    updated_at: DateTime<Utc>,
+}
+
+#[derive(Deserialize)]
+struct CreateTestimonial {
+    author: String,
+    program: String,
+    quote: String,
+    image_url: String,
+}
+
+#[derive(Deserialize)]
+struct UpdateTestimonial {
+    author: Option<String>,
+    program: Option<String>,
+    quote: Option<String>,
+    image_url: Option<String>,
+}
+
+#[derive(Serialize, FromRow)]
+struct FacultyMember {
+    id: i64,
+    name: String,
+    role: String,
+    bio: String,
+    image_url: String,
+    created_at: DateTime<Utc>,
+    updated_at: DateTime<Utc>,
+}
+
+#[derive(Deserialize)]
+struct CreateFaculty {
+    name: String,
+    role: String,
+    bio: String,
+    image_url: String,
+}
+
+#[derive(Deserialize)]
+struct UpdateFaculty {
+    name: Option<String>,
+    role: Option<String>,
+    bio: Option<String>,
+    image_url: Option<String>,
+}
+
 async fn create_contact(
     state: web::Data<AppState>,
     payload: web::Json<ContactForm>,
@@ -239,6 +293,221 @@ async fn admin_delete_success_story(
 
     let id = path.into_inner();
     let result = sqlx::query("DELETE FROM success_stories WHERE id = $1")
+        .bind(id)
+        .execute(&state.pool)
+        .await
+        .map_err(internal_error)?;
+
+    if result.rows_affected() == 0 {
+        Ok(HttpResponse::NotFound().finish())
+    } else {
+        Ok(HttpResponse::NoContent().finish())
+    }
+}
+
+async fn list_testimonials(state: web::Data<AppState>) -> actix_web::Result<HttpResponse> {
+    let rows = sqlx::query_as::<_, Testimonial>(
+        r#"SELECT id, author, program, quote, image_url, created_at, updated_at
+           FROM testimonials
+           ORDER BY created_at DESC"#,
+    )
+    .fetch_all(&state.pool)
+    .await
+    .map_err(internal_error)?;
+
+    Ok(HttpResponse::Ok().json(rows))
+}
+
+async fn admin_list_testimonials(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+) -> actix_web::Result<HttpResponse> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+    list_testimonials(state).await
+}
+
+async fn admin_create_testimonial(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+    payload: web::Json<CreateTestimonial>,
+) -> actix_web::Result<HttpResponse> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+
+    let CreateTestimonial { author, program, quote, image_url } = payload.into_inner();
+    let rec = sqlx::query_as::<_, Testimonial>(
+        r#"INSERT INTO testimonials (author, program, quote, image_url)
+           VALUES ($1, $2, $3, $4)
+           RETURNING id, author, program, quote, image_url, created_at, updated_at"#,
+    )
+    .bind(author)
+    .bind(program)
+    .bind(quote)
+    .bind(image_url)
+    .fetch_one(&state.pool)
+    .await
+    .map_err(internal_error)?;
+
+    Ok(HttpResponse::Created().json(rec))
+}
+
+async fn admin_update_testimonial(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+    path: web::Path<i64>,
+    payload: web::Json<UpdateTestimonial>,
+) -> actix_web::Result<HttpResponse> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+    let id = path.into_inner();
+    let UpdateTestimonial { author, program, quote, image_url } = payload.into_inner();
+
+    let rec = sqlx::query_as::<_, Testimonial>(
+        r#"UPDATE testimonials
+           SET author = COALESCE($2, author),
+               program = COALESCE($3, program),
+               quote = COALESCE($4, quote),
+               image_url = COALESCE($5, image_url),
+               updated_at = NOW()
+           WHERE id = $1
+           RETURNING id, author, program, quote, image_url, created_at, updated_at"#,
+    )
+    .bind(id)
+    .bind(author)
+    .bind(program)
+    .bind(quote)
+    .bind(image_url)
+    .fetch_optional(&state.pool)
+    .await
+    .map_err(internal_error)?;
+
+    match rec {
+        Some(row) => Ok(HttpResponse::Ok().json(row)),
+        None => Ok(HttpResponse::NotFound().finish()),
+    }
+}
+
+async fn admin_delete_testimonial(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+    path: web::Path<i64>,
+) -> actix_web::Result<HttpResponse> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+    let id = path.into_inner();
+    let result = sqlx::query("DELETE FROM testimonials WHERE id = $1")
+        .bind(id)
+        .execute(&state.pool)
+        .await
+        .map_err(internal_error)?;
+
+    if result.rows_affected() == 0 {
+        Ok(HttpResponse::NotFound().finish())
+    } else {
+        Ok(HttpResponse::NoContent().finish())
+    }
+}
+
+async fn list_faculty(state: web::Data<AppState>) -> actix_web::Result<HttpResponse> {
+    let rows = sqlx::query_as::<_, FacultyMember>(
+        r#"SELECT id, name, role, bio, image_url, created_at, updated_at
+           FROM faculty_members
+           ORDER BY created_at DESC"#,
+    )
+    .fetch_all(&state.pool)
+    .await
+    .map_err(internal_error)?;
+
+    Ok(HttpResponse::Ok().json(rows))
+}
+
+async fn admin_list_faculty(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+) -> actix_web::Result<HttpResponse> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+    list_faculty(state).await
+}
+
+async fn admin_create_faculty(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+    payload: web::Json<CreateFaculty>,
+) -> actix_web::Result<HttpResponse> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+    let CreateFaculty { name, role, bio, image_url } = payload.into_inner();
+    let rec = sqlx::query_as::<_, FacultyMember>(
+        r#"INSERT INTO faculty_members (name, role, bio, image_url)
+           VALUES ($1, $2, $3, $4)
+           RETURNING id, name, role, bio, image_url, created_at, updated_at"#,
+    )
+    .bind(name)
+    .bind(role)
+    .bind(bio)
+    .bind(image_url)
+    .fetch_one(&state.pool)
+    .await
+    .map_err(internal_error)?;
+
+    Ok(HttpResponse::Created().json(rec))
+}
+
+async fn admin_update_faculty(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+    path: web::Path<i64>,
+    payload: web::Json<UpdateFaculty>,
+) -> actix_web::Result<HttpResponse> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+    let id = path.into_inner();
+    let UpdateFaculty { name, role, bio, image_url } = payload.into_inner();
+
+    let rec = sqlx::query_as::<_, FacultyMember>(
+        r#"UPDATE faculty_members
+           SET name = COALESCE($2, name),
+               role = COALESCE($3, role),
+               bio = COALESCE($4, bio),
+               image_url = COALESCE($5, image_url),
+               updated_at = NOW()
+           WHERE id = $1
+           RETURNING id, name, role, bio, image_url, created_at, updated_at"#,
+    )
+    .bind(id)
+    .bind(name)
+    .bind(role)
+    .bind(bio)
+    .bind(image_url)
+    .fetch_optional(&state.pool)
+    .await
+    .map_err(internal_error)?;
+
+    match rec {
+        Some(row) => Ok(HttpResponse::Ok().json(row)),
+        None => Ok(HttpResponse::NotFound().finish()),
+    }
+}
+
+async fn admin_delete_faculty(
+    state: web::Data<AppState>,
+    req: HttpRequest,
+    path: web::Path<i64>,
+) -> actix_web::Result<HttpResponse> {
+    if !is_admin(&req, &state) {
+        return Ok(HttpResponse::Unauthorized().finish());
+    }
+    let id = path.into_inner();
+    let result = sqlx::query("DELETE FROM faculty_members WHERE id = $1")
         .bind(id)
         .execute(&state.pool)
         .await
@@ -445,6 +714,8 @@ async fn main() -> std::io::Result<()> {
                     .route("/{_:.*}", web::method(Method::OPTIONS).to(|| async { HttpResponse::Ok() }))
                     .route("/contact", web::post().to(create_contact))
                     .route("/success-stories", web::get().to(list_success_stories))
+                    .route("/testimonials", web::get().to(list_testimonials))
+                    .route("/faculty", web::get().to(list_faculty))
                     .route("/admin/login", web::post().to(admin_login))
                     .service(
                         web::scope("/admin")
@@ -454,7 +725,15 @@ async fn main() -> std::io::Result<()> {
                             .route("/success-stories", web::post().to(admin_create_success_story))
                             .route("/success-stories", web::get().to(admin_list_success_stories))
                             .route("/success-stories/{id}", web::patch().to(admin_update_success_story))
-                            .route("/success-stories/{id}", web::delete().to(admin_delete_success_story)),
+                            .route("/success-stories/{id}", web::delete().to(admin_delete_success_story))
+                            .route("/testimonials", web::get().to(admin_list_testimonials))
+                            .route("/testimonials", web::post().to(admin_create_testimonial))
+                            .route("/testimonials/{id}", web::patch().to(admin_update_testimonial))
+                            .route("/testimonials/{id}", web::delete().to(admin_delete_testimonial))
+                            .route("/faculty", web::get().to(admin_list_faculty))
+                            .route("/faculty", web::post().to(admin_create_faculty))
+                            .route("/faculty/{id}", web::patch().to(admin_update_faculty))
+                            .route("/faculty/{id}", web::delete().to(admin_delete_faculty)),
                     ),
             )
     })

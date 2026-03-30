@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Loader2, RefreshCw, Trash2, Save, LogIn } from 'lucide-react';
+import { ArrowRight, Loader2, RefreshCw, Trash2, Save, LogIn, LogOut, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE as DEFAULT_API_BASE, fetchJson } from '@/lib/api';
 
@@ -32,6 +32,7 @@ export default function AdminMessages() {
   const [error, setError] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
   const headers = useMemo(() => {
     const h: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -70,7 +71,12 @@ export default function AdminMessages() {
   }, [token, navigate]);
 
   const login = async () => {
+    if (!username || !password) {
+      setError('Enter username and password.');
+      return;
+    }
     setError(null);
+    setInfo(null);
     setLoading(true);
     try {
       const data = await fetchJson<{ token: string }>(`${API_BASE}/api/admin/login`, {
@@ -80,12 +86,23 @@ export default function AdminMessages() {
       });
       setToken(data.token);
       localStorage.setItem('admin_username', username);
+      localStorage.setItem('admin_token', data.token);
       setPassword('');
+      setInfo('Logged in');
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {
       setLoading(false);
     }
+  };
+
+  const logout = () => {
+    setToken('');
+    sessionStorage.removeItem('admin_token');
+    sessionStorage.removeItem('admin_username');
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_username');
+    navigate('/admin/login');
   };
 
   const updateMessage = async (msg: Message) => {
@@ -134,42 +151,67 @@ export default function AdminMessages() {
             <h1 className="text-3xl font-black tracking-tight">Contact Messages</h1>
           </div>
           <div className="flex flex-wrap gap-2 items-center">
-            <input
-              type="text"
-              placeholder="Admin username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-            />
-            <button
-              onClick={login}
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-primary text-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
-              disabled={loading}
-            >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
-              Login
-            </button>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Admin username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                disabled={!!token}
+              />
+              {!token && (
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                />
+              )}
+            </div>
+            {!token ? (
+              <button
+                onClick={login}
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-primary text-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
+                disabled={loading}
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
+                Login
+              </button>
+            ) : (
+              <span className="inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
+                <CheckCircle2 className="h-4 w-4" /> Logged in
+              </span>
+            )}
             <button
               onClick={fetchMessages}
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
-              disabled={loading}
+              disabled={loading || !token}
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
               Refresh
             </button>
+            {token && (
+              <button
+                onClick={logout}
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </button>
+            )}
           </div>
         </div>
 
         {error && (
           <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
+          </div>
+        )}
+        {info && (
+          <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            {info}
           </div>
         )}
 

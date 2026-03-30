@@ -16,15 +16,20 @@ const cards = [
     to: '/admin/success-stories',
     icon: FileText,
     accent: 'bg-amber-100 text-amber-700',
-    disabled: false,
   },
   {
-    title: 'Access Control',
-    description: 'Manage admin token/credentials (handled via env for now).',
-    to: '#',
+    title: 'Testimonials',
+    description: 'Publish student and parent testimonials that appear site-wide.',
+    to: '/admin/testimonials',
     icon: ShieldCheck,
     accent: 'bg-emerald-100 text-emerald-700',
-    disabled: true,
+  },
+  {
+    title: 'Faculty',
+    description: 'Keep the featured faculty roster updated with bios and photos.',
+    to: '/admin/faculty',
+    icon: ShieldCheck,
+    accent: 'bg-blue-100 text-blue-700',
   },
 ];
 
@@ -62,25 +67,22 @@ export default function AdminDashboard() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {cards.map(({ title, description, to, icon: Icon, accent, disabled }) => (
+          {cards.map(({ title, description, to, icon: Icon, accent }) => (
             <div
               key={title}
-              className={`rounded-2xl border border-border/70 bg-white p-6 shadow-sm ${disabled ? 'opacity-60' : 'hover:-translate-y-1 hover:shadow-md transition'}`}
+              className="rounded-2xl border border-border/70 bg-white p-6 shadow-sm hover:-translate-y-1 hover:shadow-md transition"
             >
               <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${accent}`}>
-                <Icon className="h-4 w-4" />
-                {disabled ? 'Coming soon' : 'Active'}
+                <Icon className="h-4 w-4" /> Active
               </div>
               <h2 className="mt-4 text-xl font-bold">{title}</h2>
               <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-              {!disabled && (
-                <Link
-                  to={to}
-                  className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary underline decoration-2 underline-offset-4"
-                >
-                  Open
-                </Link>
-              )}
+              <Link
+                to={to}
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary underline decoration-2 underline-offset-4"
+              >
+                Open
+              </Link>
             </div>
           ))}
         </div>

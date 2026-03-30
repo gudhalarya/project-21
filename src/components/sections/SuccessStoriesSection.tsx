@@ -13,35 +13,8 @@ type Story = {
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? DEFAULT_API_BASE;
 
-const fallback: Story[] = [
-  {
-    id: 1,
-    student_name: 'Aanya Verma',
-    exam: 'JEE Advanced 2025',
-    score: 'AIR 142',
-    image_url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&q=80',
-    highlight: 'Daily drills + mock reviews made the leap from 40% to 82%.'
-  },
-  {
-    id: 2,
-    student_name: 'Rishabh Kulkarni',
-    exam: 'NEET 2024',
-    score: 'Top 1%',
-    image_url: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80',
-    highlight: 'Structured timetable and analytics kept me accountable every week.'
-  },
-  {
-    id: 3,
-    student_name: 'Sanaa Rahman',
-    exam: 'SAT 2025',
-    score: '1510',
-    image_url: 'https://images.unsplash.com/photo-1502720705749-3c9255857623?w=600&q=80',
-    highlight: 'Essay reviews and timed drills pushed my score past 1500.'
-  },
-];
-
 export default function SuccessStoriesSection() {
-  const [stories, setStories] = useState<Story[]>(fallback);
+  const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,7 +24,7 @@ export default function SuccessStoriesSection() {
       setError(null);
       try {
         const data = await fetchJson<Story[]>(`${API_BASE}/api/success-stories`);
-        if (data.length) setStories(data);
+        setStories(data);
       } catch (err: any) {
         setError(err.message || 'Failed to load success stories');
       } finally {
