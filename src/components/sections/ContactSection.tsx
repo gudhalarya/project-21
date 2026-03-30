@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { API_BASE, fetchJson } from "@/lib/api";
 import {
   Select,
   SelectContent,
@@ -52,10 +53,23 @@ const ContactSection = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast.success("Inquiry sent successfully. We'll be in touch soon.");
-    form.reset();
+  const [sending, setSending] = React.useState(false);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setSending(true);
+    try {
+      await fetchJson(`${API_BASE}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+      toast.success("Inquiry sent successfully. We'll be in touch soon.");
+      form.reset();
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to send your inquiry. Please try again.');
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -92,17 +106,21 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <p className="text-sm font-bold uppercase tracking-widest opacity-50">Phone</p>
-                  <p className="text-lg font-bold uppercase tracking-tighter">+1 (555) 012-3456</p>
+                  <p className="text-base font-bold uppercase tracking-tighter">Adajan: 75675 83043</p>
+                  <p className="text-base font-bold uppercase tracking-tighter mt-1">Pal: 94276 76829</p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-6">
+              <div className="flex items-start space-x-6">
                 <div className="w-12 h-12 flex items-center justify-center border border-primary/20">
                   <MapPin className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold uppercase tracking-widest opacity-50">Address</p>
-                  <p className="text-lg font-bold uppercase tracking-tighter">789 Education Plaza, Suite 400, NY 10001</p>
+                  <p className="text-sm font-bold uppercase tracking-widest opacity-50">Campus Locations</p>
+                  <p className="text-base font-bold">Adajan Branch:</p>
+                  <p className="text-sm uppercase tracking-tight">Sai Leela Rowhouse, Nr. Parshuram Garden, Opp. CM Residency</p>
+                  <p className="text-base font-bold mt-2">Pal Branch:</p>
+                  <p className="text-sm uppercase tracking-tight">312, 313 & 420, Raj Corner, Opp. Vasu Pujya Residency, LP Savani School</p>
                 </div>
               </div>
             </div>

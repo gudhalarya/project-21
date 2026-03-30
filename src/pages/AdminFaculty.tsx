@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Loader2, LogIn, Plus, RefreshCw, Save, Trash2, LogOut } from 'lucide-react';
+import { Loader2, Plus, RefreshCw, Save, Trash2, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE as DEFAULT_API_BASE, fetchJson } from '@/lib/api';
 
@@ -24,12 +24,6 @@ const empty: Omit<Faculty, 'id' | 'created_at' | 'updated_at'> = {
 
 export default function AdminFaculty() {
   const navigate = useNavigate();
-  const getStoredToken = () => sessionStorage.getItem('admin_token') || localStorage.getItem('admin_token') || '';
-  const getStoredUser = () => sessionStorage.getItem('admin_username') || localStorage.getItem('admin_username') || '';
-
-  const [token, setToken] = useState(() => getStoredToken());
-  const [username, setUsername] = useState(() => getStoredUser());
-  const [password, setPassword] = useState('');
   const [rows, setRows] = useState<Faculty[]>([]);
   const [form, setForm] = useState(empty);
   const [loading, setLoading] = useState(false);
@@ -37,6 +31,8 @@ export default function AdminFaculty() {
   const [savingId, setSavingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
+
+  const token = sessionStorage.getItem('admin_token') || localStorage.getItem('admin_token') || '';
 
   const headers = useMemo(() => {
     const h: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -69,28 +65,7 @@ export default function AdminFaculty() {
     }
   };
 
-  const login = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await fetchJson<{ token: string }>(`${API_BASE}/api/admin/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      setToken(data.token);
-      localStorage.setItem('admin_username', username);
-      localStorage.setItem('admin_token', data.token);
-      setPassword('');
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const logout = () => {
-    setToken('');
     sessionStorage.removeItem('admin_token');
     sessionStorage.removeItem('admin_username');
     localStorage.removeItem('admin_token');
@@ -161,48 +136,20 @@ export default function AdminFaculty() {
             <h1 className="text-3xl font-black tracking-tight">Faculty</h1>
           </div>
           <div className="flex flex-wrap gap-2 items-center">
-            <input
-              type="text"
-              placeholder="Admin username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-              disabled={!!token}
-            />
-            {!token && (
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-              />
-            )}
-            {!token ? (
-              <button
-                onClick={login}
-                className="inline-flex items-center gap-2 rounded-lg border border-border bg-primary text-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
-                disabled={loading}
-              >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
-                Login
-              </button>
-            ) : (
-              <button
-                onClick={logout}
-                className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </button>
-            )}
             <button
               onClick={fetchAll}
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
-              disabled={loading || !token}
+              disabled={loading}
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
               Refresh
+            </button>
+            <button
+              onClick={logout}
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
             </button>
           </div>
         </div>

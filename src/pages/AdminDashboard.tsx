@@ -73,7 +73,7 @@ export default function AdminDashboard() {
               className="rounded-2xl border border-border/70 bg-white p-6 shadow-sm hover:-translate-y-1 hover:shadow-md transition"
             >
               <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${accent}`}>
-                <Icon className="h-4 w-4" /> Active
+                <Icon className="h-4 w-4" />
               </div>
               <h2 className="mt-4 text-xl font-bold">{title}</h2>
               <p className="mt-2 text-sm text-muted-foreground">{description}</p>

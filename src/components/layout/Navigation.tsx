@@ -49,9 +49,10 @@ const Navigation = () => {
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="text-2xl font-black uppercase tracking-tight text-foreground"
+          className="flex items-center gap-3"
         >
-          Career
+          <img src="/carrer-logo.jpeg" alt="Career Classes logo" className="h-10 w-auto object-contain" />
+          <span className="text-xl font-black uppercase tracking-tight text-foreground hidden sm:inline">Career Classes</span>
         </button>
 
         <div className="hidden items-center gap-6 md:flex">

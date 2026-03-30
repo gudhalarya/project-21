@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BadgeCheck, Eye, EyeOff, Loader2, Lock, LogIn, ShieldCheck, Users } from 'lucide-react';
+import { BadgeCheck, Eye, EyeOff, Loader2, Lock, LogIn, ShieldCheck } from 'lucide-react';
 import { API_BASE, fetchJson } from '@/lib/api';
 
 export default function AdminLogin() {
@@ -51,19 +51,7 @@ export default function AdminLogin() {
           </div>
           <div className="space-y-3">
             <h1 className="text-4xl font-black leading-tight">Secure access to your admin panel</h1>
-            <p className="text-slate-200/80 text-lg">Manage success stories, verify submissions, and keep your public site fresh. Two-step verification ready when you are.</p>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-              <p className="text-sm text-slate-200/70">Active admins</p>
-              <div className="mt-2 flex items-baseline gap-2 text-2xl font-bold">4 <Users className="h-5 w-5" /></div>
-              <p className="text-xs text-emerald-300/90">SSO ready</p>
-            </div>
-            <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-              <p className="text-sm text-slate-200/70">Uptime</p>
-              <div className="mt-2 flex items-baseline gap-2 text-2xl font-bold">99.9%</div>
-              <p className="text-xs text-amber-200/90">Shielded by role-based access</p>
-            </div>
+            <p className="text-slate-200/80 text-lg">Manage success stories, verify submissions, and keep your public site fresh.</p>
           </div>
         </div>
 
@@ -119,7 +107,6 @@ export default function AdminLogin() {
                   />
                   Keep me signed in on this device
                 </label>
-                <span className="text-primary font-semibold">Forgot password?</span>
               </div>
 
               {error && (
@@ -140,10 +127,6 @@ export default function AdminLogin() {
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />} Sign in to console
               </button>
-
-              <p className="text-xs text-slate-500">
-                Tip: API base is set to <span className="font-semibold text-slate-700">{API_BASE}</span>. Make sure your backend is running on this URL.
-              </p>
             </form>
           </div>
         </div>

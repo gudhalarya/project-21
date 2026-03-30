@@ -27,9 +27,9 @@ const highlights = [
 ];
 
 const stats = [
-  { label: "Avg. batch size", value: "12" },
-  { label: "Weekly checkpoints", value: "2×" },
-  { label: "Daily practice plan", value: "45 min" },
+  { label: "100% STD 10 Board Result", value: "2023" },
+  { label: "JEE Main Highest Qualifying Ratio", value: "Top 5%" },
+  { label: "Established Since", value: "2009" },
 ];
 
 const AboutSection = () => {

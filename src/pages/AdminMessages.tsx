@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Loader2, RefreshCw, Trash2, Save, LogIn, LogOut, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Loader2, RefreshCw, Trash2, Save, LogOut, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE as DEFAULT_API_BASE, fetchJson } from '@/lib/api';
 
@@ -21,18 +21,14 @@ const statusOptions = ['new', 'in_progress', 'resolved', 'archived'];
 
 export default function AdminMessages() {
   const navigate = useNavigate();
-  const getStoredToken = () => sessionStorage.getItem('admin_token') || localStorage.getItem('admin_token') || '';
-  const getStoredUser = () => sessionStorage.getItem('admin_username') || localStorage.getItem('admin_username') || '';
-
-  const [token, setToken] = useState(() => getStoredToken());
-  const [username, setUsername] = useState(() => getStoredUser());
-  const [password, setPassword] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+
+  const token = sessionStorage.getItem('admin_token') || localStorage.getItem('admin_token') || '';
 
   const headers = useMemo(() => {
     const h: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -46,7 +42,7 @@ export default function AdminMessages() {
 
   const fetchMessages = async () => {
     if (!token) {
-      setError('Enter admin token to load messages.');
+      navigate('/admin/login');
       return;
     }
     setLoading(true);
@@ -63,47 +59,11 @@ export default function AdminMessages() {
 
   useEffect(() => {
     if (token) {
-      localStorage.setItem('admin_token', token);
       fetchMessages();
     } else {
       navigate('/admin/login');
     }
   }, [token, navigate]);
-
-  const login = async () => {
-    if (!username || !password) {
-      setError('Enter username and password.');
-      return;
-    }
-    setError(null);
-    setInfo(null);
-    setLoading(true);
-    try {
-      const data = await fetchJson<{ token: string }>(`${API_BASE}/api/admin/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      setToken(data.token);
-      localStorage.setItem('admin_username', username);
-      localStorage.setItem('admin_token', data.token);
-      setPassword('');
-      setInfo('Logged in');
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const logout = () => {
-    setToken('');
-    sessionStorage.removeItem('admin_token');
-    sessionStorage.removeItem('admin_username');
-    localStorage.removeItem('admin_token');
-    localStorage.removeItem('admin_username');
-    navigate('/admin/login');
-  };
 
   const updateMessage = async (msg: Message) => {
     setSavingId(msg.id);
@@ -140,6 +100,14 @@ export default function AdminMessages() {
     }
   };
 
+  const logout = () => {
+    localStorage.removeItem('admin_token');
+    sessionStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_username');
+    sessionStorage.removeItem('admin_username');
+    navigate('/admin/login');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/10 via-background to-background text-foreground">
       <div className="container mx-auto px-6 py-12 space-y-8">
@@ -151,56 +119,21 @@ export default function AdminMessages() {
             <h1 className="text-3xl font-black tracking-tight">Contact Messages</h1>
           </div>
           <div className="flex flex-wrap gap-2 items-center">
-            <div className="flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Admin username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-                disabled={!!token}
-              />
-              {!token && (
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="rounded-lg border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
-                />
-              )}
-            </div>
-            {!token ? (
-              <button
-                onClick={login}
-                className="inline-flex items-center gap-2 rounded-lg border border-border bg-primary text-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
-                disabled={loading}
-              >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
-                Login
-              </button>
-            ) : (
-              <span className="inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700">
-                <CheckCircle2 className="h-4 w-4" /> Logged in
-              </span>
-            )}
             <button
               onClick={fetchMessages}
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
-              disabled={loading || !token}
+              disabled={loading}
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
               Refresh
             </button>
-            {token && (
-              <button
-                onClick={logout}
-                className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </button>
-            )}
+            <button
+              onClick={logout}
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-2 text-sm font-semibold shadow-sm hover:-translate-y-0.5 hover:shadow transition"
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </button>
           </div>
         </div>
 
@@ -319,18 +252,6 @@ export default function AdminMessages() {
               )}
             </tbody>
           </table>
-        </div>
-
-        <div className="rounded-2xl border border-border/70 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
-            How to use <ArrowRight className="h-4 w-4" />
-          </h2>
-          <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
-            <li>Paste your admin token (same as `ADMIN_TOKEN` backend env).</li>
-            <li>Click Refresh to load messages.</li>
-            <li>Edit status/message/notes inline, then hit Save.</li>
-            <li>Delete removes the entry permanently.</li>
-          </ol>
         </div>
       </div>
     </div>

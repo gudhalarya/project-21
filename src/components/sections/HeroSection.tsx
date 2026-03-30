@@ -44,7 +44,7 @@ const HeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
           >
-            Live doubt rooms, daily practice sets, weekly analytics, and mentors who stay on your case until concepts stick.
+            100% result in STD 10 board exam (Science + Commerce), NEET coaching since 2009, and highest qualifying ratio for JEE Main.
           </motion.p>
           <motion.div
             className="flex flex-wrap items-center gap-3"
@@ -55,7 +55,7 @@ const HeroSection = () => {
             <Button className="bg-[hsl(48,94%,58%)] text-foreground px-6 py-3 text-sm font-semibold tracking-tight hover:bg-[hsl(48,94%,52%)] shadow-lg shadow-black/10">
               Book a free session
             </Button>
-            <Button variant="outline" className="px-6 py-3 text-sm font-semibold tracking-tight border-white/70 text-white hover:bg-white/10 hover:text-white">
+            <Button variant="outline" className="px-6 py-3 text-sm font-semibold tracking-tight border-white/80 bg-white/10 text-white hover:bg-white/25 hover:text-white shadow-lg shadow-black/20">
               View programs
             </Button>
             <span className="text-xs uppercase tracking-[0.3em] text-white/60">No spam, just a study plan.</span>
